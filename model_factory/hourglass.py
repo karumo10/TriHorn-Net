@@ -61,11 +61,11 @@ class Bottleneck(nn.Module):
             nn.BatchNorm2d(inplanes),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=(2,2)),
-            nn.Conv2d(inplanes, planes, kernel_size=(3,3), stride=(1,1)),
+            nn.Conv2d(inplanes, planes, kernel_size=(3,3), stride=(1,1), padding=1),
             nn.BatchNorm2d(planes),
             nn.ReLU(inplace=True),
-            nn.Conv2d(planes, planes, kernel_size=(3,3), stride=(1,1)),
-            nn.UpsamplingNearest2d(scale_factor=2)
+            nn.Conv2d(planes, planes * 2, kernel_size=(3,3), stride=(1,1), padding=1) # expanded by 2
+            ,nn.UpsamplingNearest2d(scale_factor=2)
         )
 
     def forward(self, x):

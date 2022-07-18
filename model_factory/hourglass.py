@@ -51,7 +51,7 @@ class Bottleneck(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
-        self.poolLayer = self.poolLayerGenerator(self.inplanes, self.planes)
+        self.poolLayer = self.poolLayerGenerator(inplanes, planes)
 
     def poolLayerGenerator(self, inplanes, planes):
         # from 

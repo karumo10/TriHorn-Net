@@ -1,4 +1,4 @@
-datasetpath: "path"
+datasetpath: "data/ICVL"
 model_name: hglass_2_1
 dataset: icvl
 cubic_size: 280

@@ -41,12 +41,12 @@ class Bottleneck(nn.Module):
     def __init__(self, inplanes, planes, BN,num_G,stride=1,downsample=None):
         super(Bottleneck, self).__init__()
 
-        self.bn1 = nn.BatchNorm2d(inplanes) if BN else nn.GroupNorm(num_G, inplanes)
+        self.bn1 = nn.BatchNorm2d(planes) if BN else nn.GroupNorm(num_G, planes)
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=True)
         self.bn2 = nn.BatchNorm2d(planes) if BN else nn.GroupNorm(num_G, planes)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
                                padding=1, bias=True)
-        self.bn3 = nn.BatchNorm2d(planes) if BN else nn.GroupNorm(num_G, planes)
+        self.bn3 = nn.BatchNorm2d(planes * 2) if BN else nn.GroupNorm(num_G, planes)
         self.conv3 = nn.Conv2d(planes, planes * 2, kernel_size=1, bias=True)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
@@ -185,6 +185,7 @@ class HourglassNet(nn.Module):
             )
 
         layers = []
+        print("inplanes=",self.inplanes, ",planes=",planes, " -- in line188")
         layers.append(block(self.inplanes, planes,BN,num_G, stride, downsample))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):

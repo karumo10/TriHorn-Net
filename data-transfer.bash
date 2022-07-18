@@ -1,0 +1,1 @@
+rsync --archive --partial --progress . stu1496@sydata.hpc.sjtu.edu.cn:/dssg/home/acct-stu/stu1496/three-branch

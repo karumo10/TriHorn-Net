@@ -136,11 +136,11 @@ if __name__ == '__main__':
     args.dataset=setting.dataset
     if args.dataset=="nyu":
         print("NYU dataset will be used")
-        test_set=NYUHandPoseDataset(train=False,basepath=os.environ.get('NYU_PATH'),center_refined=args.center_refined)
+        test_set=NYUHandPoseDataset(train=False,basepath="data/NYU",center_refined=args.center_refined)
         
     elif args.dataset=="icvl":
         print("ICVL dataset will be used")
-        test_set=ICVLHandPoseDataset(train=False,basepath=os.environ.get('ICVL_PATH'),center_refined=args.center_refined)
+        test_set=ICVLHandPoseDataset(train=False,basepath="data/ICVL",center_refined=args.center_refined)
 
     elif args.dataset=="msra":
         print("MSRA dataset will be used")

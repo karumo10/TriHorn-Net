@@ -51,26 +51,45 @@ class Bottleneck(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
+        self.poolLayer = self.poolLayerGenerator(self.inplanes, self.planes)
+
+    def poolLayerGenerator(self, inplanes, planes):
+        # from 
+        # Xiao Chu, Wei Yang, Wanli Ouyang, Cheng Ma, Alan L. Yuille, Xiaogang Wang, Multi-Context Attention for Human Pose Estimation, CVPR, 2017.
+        # https://github.com/bearpaw/pose-attention
+        return nn.Sequential(
+            nn.BatchNorm2d(inplanes),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=(2,2)),
+            nn.Conv2d(inplanes, planes, kernel_size=(3,3), stride=(1,1)),
+            nn.BatchNorm2d(planes),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(planes, planes, kernel_size=(3,3), stride=(1,1)),
+            nn.UpsamplingNearest2d(scale_factor=2)
+        )
 
     def forward(self, x):
         residual = x
 
-        out = self.bn1(x)
+        out = self.conv1(x)
+        out = self.bn1(out)
         out = self.relu(out)
-        out = self.conv1(out)
 
+        out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
-        out = self.conv2(out)
 
+        out = self.conv3(out)
         out = self.bn3(out)
         out = self.relu(out)
-        out = self.conv3(out)
 
+        
         if self.downsample is not None:
             residual = self.downsample(x)
 
         out += residual
+
+        out += self.poolLayer(x)
 
         return out
     

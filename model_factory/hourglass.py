@@ -48,7 +48,7 @@ class Bottleneck(nn.Module):
                                padding=1, bias=True)
         self.bn3 = nn.BatchNorm2d(planes * 2) if BN else nn.GroupNorm(num_G, planes)
         self.conv3 = nn.Conv2d(planes, planes * 2, kernel_size=1, bias=True)
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.ReLU(inplace=False)
         self.downsample = downsample
         self.stride = stride
         self.poolLayer = self.poolLayerGenerator(inplanes, planes)
@@ -59,11 +59,11 @@ class Bottleneck(nn.Module):
         # https://github.com/bearpaw/pose-attention
         return nn.Sequential(
             nn.BatchNorm2d(inplanes),
-            nn.ReLU(inplace=True),
+            self.relu,
             nn.MaxPool2d(kernel_size=2, stride=(2,2)),
             nn.Conv2d(inplanes, planes, kernel_size=(3,3), stride=(1,1), padding=1),
             nn.BatchNorm2d(planes),
-            nn.ReLU(inplace=True),
+            self.relu,
             nn.Conv2d(planes, planes * 2, kernel_size=(3,3), stride=(1,1), padding=1) # expanded by 2
             ,nn.UpsamplingNearest2d(scale_factor=2)
         )
@@ -87,9 +87,9 @@ class Bottleneck(nn.Module):
         if self.downsample is not None:
             residual = self.downsample(x)
 
-        out += residual
+        out = out + residual
 
-        out += self.poolLayer(x)
+        out = out + self.poolLayer(x)
 
         return out
     
@@ -185,7 +185,7 @@ class HourglassNet(nn.Module):
             )
 
         layers = []
-        print("inplanes=",self.inplanes, ",planes=",planes, " -- in line188")
+        # print("inplanes=",self.inplanes, ",planes=",planes, " -- in line188")
         layers.append(block(self.inplanes, planes,BN,num_G, stride, downsample))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
